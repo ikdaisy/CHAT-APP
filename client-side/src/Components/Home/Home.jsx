@@ -2,18 +2,58 @@ import React, { useEffect, useState } from "react";
 import Api from "../Api";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import '../../App.css'
 import { useNavigate, Link } from "react-router-dom";
 
 const Home = ({ setUser }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem('Token');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [contacts, setContacts] = useState([]);
   const [chatMembers, setChatMembers] = useState([]);
   const [currentPage, setCurrentPage] = useState("chats");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({});
+  const [searchQuery,setSearchQuery]=useState("")
+const filteredContacts=chatMembers.filter((mb)=>
+      mb.username.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+ 
+const handleImageChange=async(e)=>{
+  console.log(e.target.files[0]);
+    
+  const profile=await convertBase64(e.target.files[0])
+  // console.log(profile);
+  setProfileData((pre)=>({...pre,profile:profile}))
+}
+function convertBase64(file){
+  return new Promise((resolve,reject)=>{
+      const fileReader=new FileReader()
+      // console.log(fileReader);
+      fileReader.readAsDataURL(file)
+      fileReader.onload=()=>{
+          resolve(fileReader.result);
 
+      }
+      fileReader.onerror=(error)=>{
+          reject(error);
+      }
+      
+  })
+
+}
+ 
+const handleOpenChat=async(_id)=>{
+  try {
+    const res = await axios.get(`${Api()}/openchat/${_id}`,{ headers: { "authorization": `Bearer ${token}` } })
+    console.log(res);
+    fetchUser()
+    
+    
+  } catch (error) {
+    console.log(error.response);
+    
+    
+  }
+}
   const handleProfileClick = () => {
     setCurrentPage("profile");
   };
@@ -59,9 +99,17 @@ const Home = ({ setUser }) => {
     }));
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(()=>{
+  //   fetchUser();
+
+  //   },1000)
+  //   return ()=>clearInterval(interval)
+  // }, []);
+
+  useEffect(()=>{
+fetchUser()
+  },[])
 
   const fetchUser = async () => {
     if (token) {
@@ -69,8 +117,8 @@ const Home = ({ setUser }) => {
         const res = await axios.get(`${Api()}/getuser`, { headers: { "authorization": `Bearer ${token}` } });
         setProfileData(res.data.user);
         setUser(res.data.user.username);
-        // setChatMembers([...new Map(res.data.chatMembers.map(member => [member._id, member])).values()].reverse());
-        setChatMembers(res.data.chatMembers)
+        setChatMembers([...new Map(res.data.chatMembers.map(member => [member._id, member])).values()].reverse());
+       
       } catch (error) {
         console.log(error);
       }
@@ -80,20 +128,53 @@ const Home = ({ setUser }) => {
   };
 
   const handleLogout = () => {
-    navigate('/signin');
-    localStorage.removeItem('Token');
-    setUser('');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#008080', // Teal color
+      cancelButtonColor: '#f4f4f4', // Light background for cancel
+      confirmButtonText: '<span style="color: white;">Yes, log me out!</span>', // White text
+      cancelButtonText: '<span style="color: #333;">Cancel</span>', // Dark text for contrast
+      background: '#ffffff', // White background
+      color: '#333', // Dark text for the popup content
+      customClass: {
+        title: 'text-lg font-bold', // Optional: Add extra styling
+        content: 'text-sm',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform logout actions
+        setUser('');
+        navigate('/signin');
+        localStorage.removeItem('Token');
+  
+        Swal.fire({
+          title: 'Logged Out',
+          text: 'You have been successfully logged out.',
+          icon: 'success',
+          timer: 1000,
+          showConfirmButton: false,
+          background: '#ffffff', // White background
+          color: '#008080', // Teal text
+          iconColor: '#008080', // Teal icon
+        });
+      }
+    });
   };
+ 
+  
 
   return (
-    <div className="flex h-screen">
-      <div className="w-64 pt-12 text-black border border-right p-6 flex flex-col">
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <div className="w-full md:w-64 pt-12 text-black border border-right p-6 flex flex-col">
         <nav>
           <ul className="space-y-4">
             <li>
               <button
                 onClick={handleChatClick}
-                className="text-lg px-12 py-1 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
+                className="text-lg w-full py-1 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +196,7 @@ const Home = ({ setUser }) => {
             <li>
               <button
                 onClick={handleProfileClick}
-                className="text-lg px-12 py-1 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
+                className="text-lg w-full py-1 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +218,7 @@ const Home = ({ setUser }) => {
             <li>
               <button
                 onClick={handleLogout}
-                className="text-lg px-12 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
+                className="text-lg w-full py-1 border border-teal-500 text-teal-600 hover:bg-teal-600 hover:text-white flex items-center justify-center"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -165,22 +246,81 @@ const Home = ({ setUser }) => {
           <>
           <div>
                         <h2 className="text-2xl font-bold text-teal-600 mb-6">Chats</h2>
+                        <div className="relative mb-6">
+        {/* Search Icon */}
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <circle cx="10" cy="10" r="7" stroke="black" strokeWidth="2" fill="none"/>
+  <line x1="15" y1="15" x2="20" y2="20" stroke="black" strokeWidth="2"/>
+</svg>
+        </span>
+        <input
+          type="text"
+          placeholder="Search contacts" onChange={(e)=>{setSearchQuery(e.target.value)}}
+          className="w-full p-3  pl-10 border border-teal-600 rounded-lg shadow-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition ease-in-out duration-200"
+        />
+      </div>
                         <div className=" w-96grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {chatMembers.map((member) => (
-                                <Link to={`/chat/${member._id}`} key={member._id}>
-                                    <div className="p-4 bg-white rounded-lg shadow hover:shadow-md transition">
-                                        <div className="flex items-center space-x-4">
-                                            <img
-                                                src={member.profile}
-                                                alt={member.username}
-                                                className="w-12 h-12 rounded-full border-2 border-teal-500"
-                                            />
-                                            <div>
-                                                <p className="text-lg font-semibold text-gray-800">{member.username}</p>
-                                                <p className="text-sm text-gray-500">Last message...</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                            {filteredContacts.map((member) => (
+                                <Link to={`/chat/${member._id}`} key={member._id} onClick={()=>{handleOpenChat(member._id)}}>
+                                    <div className="p-4 bg-white rounded-lg shadow hover:shadow-md transition flex justify-between items-center">
+  <div className="flex items-center space-x-4">
+    <img
+      src={member.profile}
+      alt={member.username}
+      className="w-12 h-12 rounded-full border-2 border-teal-500"
+    />
+    <div>
+      <p className="text-lg font-semibold text-gray-800">{member.username}</p>
+      <p className="text-sm text-gray-500 truncate w-32">
+        {member.lastMessage || "No messages yet..."}
+      </p>
+    </div>
+  </div>
+  <div className="text-right">
+  {member.lastMessageTime && (
+    <p className='text-teal-600'>
+    {(() => {
+      try {
+        // Date in DD/MM/YYYY format
+        const [day, month, year] = member.lastMessageDate.split('/').map(Number);
+        
+        // Time in h:mm:ss a format (12-hour format with AM/PM)
+        const [time, ampm] = member.lastMessageTime.split(' ');
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+        
+        // Convert 12-hour format to 24-hour format
+        const hours24 = ampm.toLowerCase() === 'am' ? (hours === 12 ? 0 : hours) : (hours === 12 ? 12 : hours + 12);
+        
+        // Create a Date object from the parsed components
+        const lastMessageDateTime = new Date(year, month - 1, day, hours24, minutes, seconds);
+
+        // Get the current date and time
+        const now = new Date();
+        
+        // Check if the message was sent on the same day
+        const isSameDay = lastMessageDateTime.getFullYear() === now.getFullYear() &&
+                          lastMessageDateTime.getMonth() === now.getMonth() &&
+                          lastMessageDateTime.getDate() === now.getDate();
+
+        // Return time if same day, otherwise return date
+        return isSameDay ? member.lastMessageTime : member.lastMessageDate;
+      } catch (error) {
+        console.error("Error parsing date/time:", error);
+        return member.lastMessageTime; // Fallback to date if parsing fails
+      }
+    })()}
+  </p>
+  )}
+  {member.unreadCount > 0 && (
+    <div className="bg-teal-600 text-white text-xs font-bold ms-6 w-6 h-6 flex items-center justify-center rounded-full">
+      {member.unreadCount}
+    </div>
+  )}
+</div>
+
+</div>
+
                                 </Link>
                             ))}
                         </div>
@@ -205,19 +345,49 @@ const Home = ({ setUser }) => {
                 New Chat
               </button>
                     </div>
-                    
+
           </>
         ) : (
           <div>
             <h2 className="text-3xl font-semibold text-teal-600">Your Profile</h2>
             <div className="mt-8 flex items-center space-x-4">
-              <div className="w-24 h-24 rounded-full overflow-hidden">
-                <img
-                  className="w-full h-full object-cover"
-                  src={profileData.profile}
-                  alt="Profile"
-                />
-              </div>
+            <div className="w-24 h-24 rounded-full overflow-hidden relative group">
+  <img
+    className="w-full h-full object-cover"
+    src={profileData.profile} 
+    alt="Profile" 
+  />
+  {isEditing && (
+    <label
+      htmlFor="profile"
+      className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2}
+        stroke="currentColor"
+        className="w-6 h-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5 12.5a7.5 7.5 0 1115 0M12 8v9m0 0l3.5-3.5M12 17l-3.5-3.5"
+        />
+      </svg>
+      <span className="ml-2">Edit</span>
+      <input
+        id="profile"
+        type="file"
+       
+        className="hidden"
+        onChange={handleImageChange}
+      />
+    </label>
+  )}
+</div>
+
             </div>
             <div className="mt-8">
               <h4 className="text-xl font-semibold">Account Details</h4>

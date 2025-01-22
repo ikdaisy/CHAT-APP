@@ -67,100 +67,226 @@ export async function checkEmail(req, res) {
             buttonText = "Verify Your Account";
             buttonUrl = "http://localhost:5173/signup";
             htmlContent = `
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Account Verification</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 0;
-                            padding: 0;
-                            background-color: #f4f4f4;
-                            color: #333;
-                        }
-                        .email-container {
-                            width: 100%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            border: 1px solid #ddd;
-                            padding: 20px;
-                            border-radius: 8px;
-                            text-align: center;
-                        }
-                        .btn {
-                            display: inline-block;
-                            background-color: #000000;
-                            color: #ffffff;
-                            text-decoration: none;
-                            padding: 15px 30px;
-                            margin-top: 20px;
-                            border-radius: 4px;
-                            font-size: 18px;
-                            text-align: center;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <p>Hello,</p>
-                        <p>Please verify your email address by clicking the button below.</p>
-                        <a href="${buttonUrl}" class="btn">${buttonText}</a>
-                    </div>
-                </body>
-                </html>
+               <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+
+      .email-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .email-header {
+        margin-bottom: 20px;
+      }
+
+      .email-header img {
+        width: 80px;
+        height: auto;
+      }
+
+      .email-header h1 {
+        font-size: 24px;
+        color: #2c7a7b;
+        margin: 10px 0 0;
+      }
+
+      .email-body {
+        margin: 20px 0;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #555555;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #38b2ac;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 15px 30px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .btn:hover {
+        background-color: #2c7a7b;
+        box-shadow: 0 4px 10px rgba(56, 178, 172, 0.4);
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #999999;
+      }
+
+      .footer a {
+        color: #38b2ac;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="email-header">
+        <h1>Email Verification</h1>
+      </div>
+
+      <!-- Body -->
+      <div class="email-body">
+        <p>Hello,</p>
+        <p>
+          Thank you for signing up with us! To complete your registration,
+          please verify your email address by clicking the button below:
+        </p>
+        <a href="${buttonUrl}" class="btn">Verify Email</a>
+        <p>If you did not request this, please ignore this email.</p>
+      </div>
+
+    
+    </div>
+  </body>
+</html>
+
             `;
         } else if (type === 'forgot-password') {
             subject = "RESET PASSWORD";
             buttonText = "Reset Your Password";
             buttonUrl = "http://localhost:5173/confirmpassword"; // You may want to replace this with a dynamic reset link
             htmlContent = `
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Password Reset</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            margin: 0;
-                            padding: 0;
-                            background-color: #f4f4f4;
-                            color: #333;
-                        }
-                        .email-container {
-                            width: 100%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            border: 1px solid #ddd;
-                            padding: 20px;
-                            border-radius: 8px;
-                            text-align: center;
-                        }
-                        .btn {
-                            display: inline-block;
-                            background-color: #000000;
-                            color: #ffffff;
-                            text-decoration: none;
-                            padding: 15px 30px;
-                            margin-top: 20px;
-                            border-radius: 4px;
-                            font-size: 18px;
-                            text-align: center;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="email-container">
-                        <p>Hello,</p>
-                        <p>If you requested a password reset, please click the button below to reset your password.</p>
-                        <a href="${buttonUrl}" class="btn">${buttonText}</a>
-                    </div>
-                </body>
-                </html>
+               <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RESET PASSWORD</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+
+      .email-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .email-header {
+        margin-bottom: 20px;
+      }
+
+      .email-header img {
+        width: 80px;
+        height: auto;
+      }
+
+      .email-header h1 {
+        font-size: 24px;
+        color: #2c7a7b;
+        margin: 10px 0 0;
+      }
+
+      .email-body {
+        margin: 20px 0;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #555555;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: #38b2ac;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 15px 30px;
+        margin-top: 20px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+        a{
+         color: #ffffff;
+        text-decoration: none;
+        }
+
+      .btn:hover {
+        background-color: #2c7a7b;
+        box-shadow: 0 4px 10px rgba(56, 178, 172, 0.4);
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #999999;
+      }
+
+      .footer a {
+        color: #38b2ac;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="email-header">
+       
+        <h1>RESET PASSWORD</h1>
+      </div>
+
+      <!-- Body -->
+      <div class="email-body">
+        <p>Hello,</p>
+        <p>
+          If you requested a password reset, please click the button below to reset your password.
+        </p>
+        <a href="${buttonUrl}" class="btn">Verify Email</a>
+        <p>If you did not request this, please ignore this email.</p>
+      </div>
+
+    
+    </div>
+  </body>
+</html>
+
             `;
         } else {
             return res.status(400).send({ msg: "Invalid request type" });
@@ -199,26 +325,83 @@ export async function changePassword(req,res) {
 
 export async function getUser(req,res) {
     try {
-        const id=req.user
-        const{_id}=req.params
-        const receivers=await chatMemberSchema.find({senderId:id});
-        console.log(receivers);
-        
-        const chatMemberPromises = receivers.map(async (receiver) => {
-            if(receiver.senderId==id)
-                return await userSchema.findOne({ _id: receiver.receiverId },{username:1,profile:1});
-            // if(receiver.receiverId==id)
-            //     return await userSchema.findOne({ _id: receiver.senderId },{username:1,profile:1});
+        const id = req.user; // Current user's ID
+        const { _id } = req.params;
+    
+        // Fetch all chat members where the user is either the sender or receiver
+        const receivers = await chatMemberSchema.find({
+            $or: [{ senderId: id }, { receiverId: id }]
         });
+        // console.log(receivers);
+    
+        // Fetch details for each chat member, including the last message and unread count
+        const chatMemberPromises = receivers.map(async (receiver) => {
+            const partnerId = receiver.senderId === id ? receiver.receiverId : receiver.senderId;
+    
+            // Fetch partner's details
+            const partnerDetails = await userSchema.findOne({ _id: partnerId }, { username: 1, profile: 1 });
+    
+            // Fetch the last message between the current user and the partner
+            const lastMessage = await messageSchema
+                .findOne({
+                    $or: [
+                        { senderId: id, receiverId: partnerId },
+                        { senderId: partnerId, receiverId: id }
+                    ]
+                })
+                .sort({ timestamp:-1 }); // Sort by latest time and date
+                // console.log(lastMessage);
+                
+            // Count unread messages sent by the partner to the current user
+            const unreadCount = await messageSchema.countDocuments({
+                senderId: partnerId,
+                receiverId: id,
+                isRead: false // Assuming `isRead` field exists in messageSchema
+            });
+            // console.log(unreadCount);
+            
+    
+            return {
+                ...partnerDetails._doc, // Spread partner details
+                lastMessage: lastMessage ? lastMessage.message : null,
+                lastMessageTime: lastMessage ? lastMessage.time : null,
+                lastMessageDate: lastMessage ? lastMessage.date : null,
+                unreadCount
+            };
+        });
+    
+        // Wait for all chat members to be processed
         const chatMembers = await Promise.all(chatMemberPromises);
-
-        const user= await userSchema.findOne({_id:id})
+    
+        // Fetch the current user's details
+        const user = await userSchema.findOne({ _id: id });
+        // console.log(chatMembers);
         
-        // console.log(user);
-        return res.status(200).send({user,chatMembers})
+        // Send the response with user and chat members' details
+        return res.status(200).send({ user, chatMembers });
     } catch (error) {
-        return res.status(404).send(error)
+        console.error(error);
+        return res.status(404).send(error);
+    }
+    
+    
+}
+export async function openChat(req,res) {
+    try {
+        const id = req.user; // Current user's ID
+        const { _id } = req.params;
+         await messageSchema.updateMany({senderId:_id,receiverId:id,isRead:false},{$set:{isRead:true}}).then(()=>{
+         return res.status(201).send({msg:"Successfully Updated"})
 
+        }).catch((error)=>{
+            console.log(error);
+            return res.status(404).send(error)
+
+        })
+        
+
+    } catch (error) {
+        return res.status(404).send(error);
         
     }
     
@@ -244,8 +427,10 @@ export async function getReceiver(req,res) {
 
 export async function editUser(req,res) {
     const _id=req.user 
-    const {username,email,phone}=req.body
-    await userSchema.updateOne({_id},{$set:{username,email,phone}}).then(()=>{
+    const {username,email,phone,profile}=req.body
+    // console.log(profile);
+    
+    await userSchema.updateOne({_id},{$set:{username,email,phone,profile}}).then(()=>{
         res.status(201).send({msg:"Successfully Updated"})
     }).catch ((error)=>{
         return res.status(404).send(error)

@@ -17,23 +17,62 @@ const SignUp = () => {
     profile: "",
   });
 
+  const [errors, setErrors] = useState({
+    password: "",
+    cpassword: "",
+    phone: "",
+  });
+
   const handleChange = (e) => {
-    setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
+
+    // Validation while typing
+    if (name === "password") {
+      const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
+      if (!passwordRegex.test(value)) {
+        setErrors((prev) => ({ ...prev, password: "Password must be 8-16 characters, include uppercase, lowercase, number, and special character." }));
+      } else {
+        setErrors((prev) => ({ ...prev, password: "" }));
+      }
+    }
+
+    if (name === "cpassword") {
+      if (value !== userData.password) {
+        setErrors((prev) => ({ ...prev, cpassword: "Passwords do not match." }));
+      } else {
+        setErrors((prev) => ({ ...prev, cpassword: "" }));
+      }
+    }
+
+    if (name === "phone") {
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(value)) {
+        setErrors((prev) => ({ ...prev, phone: "Phone number must be a 10-digit number." }));
+      } else {
+        setErrors((prev) => ({ ...prev, phone: "" }));
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (errors.password || errors.cpassword || errors.phone) {
+      toast.error("Please fix the errors before submitting.", {
+        position: "bottom-center",
+        autoClose: 5000,
+        theme: "dark",
+      });
+      return;
+    }
+
     try {
       const res = await axios.post(`${Api()}/signup`, userData);
       if (res.status === 201) {
         toast.success(`🦄 ${res.data.msg}!`, {
           position: "bottom-center",
           autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
           theme: "dark",
         });
         setTimeout(() => {
@@ -44,30 +83,27 @@ const SignUp = () => {
       toast.error(`🦄 ${error.response.data.msg}!`, {
         position: "bottom-center",
         autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
         theme: "dark",
       });
     }
   };
-  const handleFile=async(e)=>{
-    const profile=await convertToBase64(e.target.files[0])
-    setUserData((pre)=>({...pre,profile:profile}))
-  }
+
+  const handleFile = async (e) => {
+    const profile = await convertToBase64(e.target.files[0]);
+    setUserData((prev) => ({ ...prev, profile: profile }));
+  };
+
   function convertToBase64(file) {
-    return new Promise((resolve,reject)=>{
-        const fileReader=new FileReader();
-        fileReader.readAsDataURL(file);
-        fileReader.onload=()=>{
-            resolve(fileReader.result)
-        }
-        fileReader.onerror= (error)=>{
-            reject(error)
-        }
-    })
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
   }
 
   return (
@@ -120,6 +156,7 @@ const SignUp = () => {
               placeholder="Enter your phone number"
               className="mt-1 w-full p-3 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
             />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
 
           <div>
@@ -136,6 +173,7 @@ const SignUp = () => {
               placeholder="Enter your password"
               className="mt-1 w-full p-3 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
             />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
 
           <div>
@@ -152,6 +190,7 @@ const SignUp = () => {
               placeholder="Confirm your password"
               className="mt-1 w-full p-3 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 text-gray-900"
             />
+            {errors.cpassword && <p className="text-red-500 text-sm">{errors.cpassword}</p>}
           </div>
 
           <button

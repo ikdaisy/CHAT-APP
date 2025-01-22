@@ -19,8 +19,12 @@ const Chat = ({ setUser }) => {
   const { _id } = useParams();
 
   useEffect(() => {
-    fetchContacts();
-  }, []);
+     const interval = setInterval(()=>{
+      fetchContacts()
+ 
+     },1000)
+     return ()=>clearInterval(interval)
+   }, []);
 
   const fetchContacts = async () => {
     if (token) {
@@ -80,7 +84,7 @@ const Chat = ({ setUser }) => {
   return (
     <div className="flex flex-col h-screen bg-teal-50">
       {/* Header with Back Arrow and Profile */}
-      <div className="flex items-center border border-teal-600 hover:bg-teal-500 p-2 mt-12">
+      <div className="flex items-center border border-teal-600 hover:bg-teal-500 p-2 ">
         <button
           onClick={() => navigate("/")}
           className="text-teal-600 hover:text-teal-800 mr-4"

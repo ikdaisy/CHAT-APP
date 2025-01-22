@@ -5,7 +5,10 @@ const messageSchema=new mongoose.Schema({
     receiverId:{type:String},
     message:{type:String},
     time:{type:String},
-    date:{type:String}
+    date:{type:String},
+    timestamp: { type: Date, default: Date.now },
+    isRead: { type: Boolean, default: false }
+
 })
 
 export default mongoose.model.Messages || mongoose.model("Message",messageSchema);

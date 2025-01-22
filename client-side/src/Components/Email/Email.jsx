@@ -9,10 +9,26 @@ const Email = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [type, setType] = useState("signup"); // Default to signup
+  const [errors,setErrors]=useState({email:""})
 
   const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
+    const value = e.target.value;
+    setEmail(value);
+  
+    if (!value) {
+      // If the field is empty, clear the error message
+      setErrors((prev) => ({ ...prev, email: "" }));
+      return;
+    }
+  
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    if (!emailRegex.test(value)) {
+      setErrors((prev) => ({ ...prev, email: "Invalid email" }));
+    } else {
+      setErrors((prev) => ({ ...prev, email: "" }));
+    }
   };
+  
 
   const handleChangeType = (e) => {
     setType(e.target.value);
@@ -83,6 +99,7 @@ const Email = () => {
                         className="block w-full py-4 pl-10 pr-4 text-black placeholder-teal-500 transition-all duration-200 bg-white border border-teal-200 rounded-md focus:outline-none focus:border-teal-600 caret-teal-600"
                         required
                       />
+                      {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                     </div>
                   </div>
 
