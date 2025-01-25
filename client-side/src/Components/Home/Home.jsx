@@ -283,7 +283,7 @@ fetchUser()
     {(() => {
       try {
         // Date in DD/MM/YYYY format
-        const [day, month, year] = member.lastMessageDate.split('/').map(Number);
+        const [month,day, year] = member.lastMessageDate.split('/').map(Number);
         
         // Time in h:mm:ss a format (12-hour format with AM/PM)
         const [time, ampm] = member.lastMessageTime.split(' ');

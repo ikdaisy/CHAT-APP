@@ -32,6 +32,8 @@ const Chat = ({ setUser }) => {
         const res = await axios.get(`${Api()}/getcontact/${_id}`, {
           headers: { authorization: `Bearer ${token}` },
         });
+        console.log(res);
+        
         setMessages(res.data.chats);
         setUid(res.data.uid);
         setReceiver(res.data.receiver);

@@ -13,6 +13,7 @@ const ConfirmPassword = () => {
   // const [password, setPassword] = useState('');
   // const [confirmPassword, setConfirmPassword] = useState('');
   const [data,setData]=useState({
+    email:email,
     password:"",
     cpassword:""
   })
@@ -51,7 +52,7 @@ const ConfirmPassword = () => {
   const handleSubmit =async (e) => {
     e.preventDefault();
    
-    const res = await axios.post(`${Api()}/changepassword`,{email,password})
+    const res = await axios.post(`${Api()}/changepassword`,data)
    toast.success(`🦄 ${res.data.msg}!`, {
                         position: "bottom-center",
                         autoClose: 5000,

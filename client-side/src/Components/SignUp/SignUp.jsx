@@ -25,36 +25,48 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
+    // Update user data
     setUserData((prev) => ({ ...prev, [name]: value }));
-
+  
     // Validation while typing
     if (name === "password") {
       const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
-      if (!passwordRegex.test(value)) {
+      if (!value) {
+        setErrors((prev) => ({ ...prev, password: "" })); // Handle empty field
+      }
+      else if (!passwordRegex.test(value)) {
         setErrors((prev) => ({ ...prev, password: "Password must be 8-16 characters, include uppercase, lowercase, number, and special character." }));
       } else {
         setErrors((prev) => ({ ...prev, password: "" }));
       }
     }
-
+  
     if (name === "cpassword") {
-      if (value !== userData.password) {
+      if (!value) {
+        setErrors((prev) => ({ ...prev, cpassword: "" })); // Handle empty field
+      }
+      // Directly compare with the current value of password in the state, not userData
+      else if (value !== userData.password) {
         setErrors((prev) => ({ ...prev, cpassword: "Passwords do not match." }));
       } else {
         setErrors((prev) => ({ ...prev, cpassword: "" }));
       }
     }
-
+  
     if (name === "phone") {
       const phoneRegex = /^\d{10}$/;
-      if (!phoneRegex.test(value)) {
+      if (!value) {
+        setErrors((prev) => ({ ...prev, phone: "" })); // Handle empty field
+      }
+      else if (!phoneRegex.test(value)) {
         setErrors((prev) => ({ ...prev, phone: "Phone number must be a 10-digit number." }));
       } else {
         setErrors((prev) => ({ ...prev, phone: "" }));
       }
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
