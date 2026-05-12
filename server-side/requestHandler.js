@@ -2,7 +2,7 @@ import userSchema from './models/user.model.js'
 import chatMemberSchema from './models/chatmember.model.js'
 import messageSchema from './models/message.model.js'
 import crypto from 'crypto'
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 const {sign}= jwt
